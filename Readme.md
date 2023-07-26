@@ -9,13 +9,17 @@ This is a simple project to visualize product report data into charts. This proj
 
 ## How to run code
 
-1. Install all dependencies
+1. Copy file `.env.example` and rename it to `.env`
+
+2. Fill environment with your configuration
+
+3. Install all dependencies
 
     ```sh
         npm install
    ```
 
-2. Run application
+4. Run application
 
     ```sh
         npm run start
