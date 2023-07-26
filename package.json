@@ -1,0 +1,35 @@
+{
+  "name": "pitjarus-interview-expressjs",
+  "version": "1.0.0",
+  "description": "Interview project at PT Pitjarus Teknologi",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/falahlaz/pitjarus-interview.git"
+  },
+  "keywords": [
+    "pitjarus-interview"
+  ],
+  "author": "Falahlaz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/falahlaz/pitjarus-interview/issues"
+  },
+  "homepage": "https://github.com/falahlaz/pitjarus-interview#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "hbs": "^4.2.0",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.45.0",
+    "eslint-config-google": "^0.14.0",
+    "nodemon": "^3.0.1"
+  }
+}

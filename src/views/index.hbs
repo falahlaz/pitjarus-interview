@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <form class="row">
+            <div class="col">
+                <label class="form-label">Select Area</label>
+                <select class="form-label form-select selected-area-form" name="selected_areas" multiple
+                    aria-label="multiple select example">
+                    {{#each storeAreas}}
+                    <option value="{{ area_id }}">{{ area_name }}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="col">
+                <label class="form-label">Date From</label>
+                <input type="date" name="date_from" class="date-from-form form-control">
+            </div>
+            <div class="col">
+                <label class="form-label">Date To</label>
+                <input type="date" name="date_to" class="date-to-form form-control">
+            </div>
+            <div class="col">
+                <button type="button" onclick="SubmitForm()" class="filter-button mt-4 btn btn-primary">Filter</button>
+            </div>
+        </form>
+
+        <div class="row">
+            <canvas id="myChart"></canvas>
+        </div>
+
+        <br><br><br>
+
+        <div class="row">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Brand</th>
+                        <th scope="col">DKI Jakarta</th>
+                        <th scope="col">Jawa Barat</th>
+                        <th scope="col">Kalimantan</th>
+                        <th scope="col">Jawa Tengah</th>
+                        <th scope="col">Bali</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    $(document).ready(function () {
+        Init();
+    });
+</script>
+
+<script>
+    const ctx = document.getElementById('myChart');
+    const host = "http://localhost:3000/api/v1";
+    let myChart;
+
+    function Init() {
+        GetChartData('');
+        GetBrandData('');
+    }
+
+    function LoadChart(labels, data) {
+        if (myChart) {
+            myChart.destroy();
+        }
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '# of Votes',
+                    data: data,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function GetChartData(payload) {
+        const url = `${host}/get-chart?${payload}`;
+        let labels = [];
+        let data = [];
+
+        $.get(url, function (res) {
+            res.map((item) => {
+                labels.push(item.area_name);
+                data.push(item.total_compliance);
+            });
+        }).done(function () {
+            LoadChart(labels, data);
+        });
+    }
+
+    function GetBrandData(payload) {
+        const url = `${host}/get-brand?${payload}`;
+        const tableBody = $('.table-body');
+        let data = [];
+
+        $.get(url, function (res) {
+            for (const key in res) {
+                data.push(res[key]);
+            }
+        }).done(function () {
+            tableBody.empty();
+
+            data.map((item) => {
+                tableBody.append(`
+                    <tr>
+                        <td>${item.product_name}</td>
+                        <td>${item.dki_jakarta}</td>
+                        <td>${item.jawa_barat}</td>
+                        <td>${item.kalimantan}</td>
+                        <td>${item.jawa_tengah}</td>
+                        <td>${item.bali}</td>
+                    </tr>
+                `);
+            });
+        });
+    }
+
+    function SubmitForm() {
+        let payload = {
+            'selected_areas': $('.selected-area-form').val(),
+            'date_from': $('.date-from-form').val(),
+            'date_to': $('.date-to-form').val()
+        };
+
+        queryParam = new URLSearchParams(payload).toString()
+
+        GetChartData(queryParam);
+        GetBrandData(queryParam);
+    }
+</script>
+
+</html>
